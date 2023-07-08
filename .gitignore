@@ -1,0 +1,5 @@
+# ignore emacs autosave files
+*~
+
+# ignore byte compiled files
+__pycache__/
