@@ -1,0 +1,4 @@
+getpass
+sys
+requests
+beautifulsoup4
