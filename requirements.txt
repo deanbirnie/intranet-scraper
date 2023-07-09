@@ -1,4 +1,2 @@
-getpass
-sys
-requests
 beautifulsoup4
+requests
