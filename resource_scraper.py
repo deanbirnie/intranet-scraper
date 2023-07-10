@@ -5,6 +5,7 @@ import logging
 import getpass
 import sys
 import requests
+import json
 from bs4 import BeautifulSoup, Tag
 # from urllib.parse import urljoin
 
@@ -49,11 +50,9 @@ def login():
         logging.error("Error occurred during login: %s", str(e))
         sys.exit(1)
 
-    print("Successful login.")
-
     return session, soup
 
-def save_resource(project_url, session, soup, topic):
+def save_resource(project_url, session, soup):
     # Send a GET request to the project URL
     response = session.get(project_url)
 
@@ -61,9 +60,6 @@ def save_resource(project_url, session, soup, topic):
     if response.status_code != 200:
         print("Failed to retrieve the project page.")
         sys.exit(1)
-
-    print("Successfully retrieved the project page.")
-    #print(response.content)
 
     soup = BeautifulSoup(response.text, 'html.parser')
 
@@ -90,6 +86,20 @@ def save_resource(project_url, session, soup, topic):
     if not ul_tags:
         print("No resources found.")
         return
+
+    # Find the tags within the block
+    tags_block = soup.find('div', {'data-react-class': 'tags/Tags'})
+
+    if tags_block:
+        tags_data = tags_block.get('data-react-props')
+        tags_json = json.loads(tags_data)
+        tags = [tag['value'] for tag in tags_json['tags']]
+        tags_string = ', '.join(tags)
+    else:
+        tags_string = ''
+
+    print(tags)
+    print("Located tags:", tags_string)
 
     # Open the text file for writing (create if not exist)
     file_path = 'resources.txt'
@@ -121,9 +131,21 @@ def save_resource(project_url, session, soup, topic):
                     real_url = href_url
 
                 # Write the resource entry to the text file
-                file.write(f"{topic}, {href_title}, {real_url}\n")
+                file.write(f"{project_name}, Tags: [{tags_string}], {href_title}, {real_url}\n")
 
     print("Resources saved to 'resources.txt' file.")
+
+def process_projects(project_urls, session):
+    for project_url in project_urls:
+        project_url = project_url.strip()
+        print(f"Retrieving the project page from URL: {project_url}")
+        response = session.get(project_url)
+        ...
+        ...
+
+        soup = BeautifulSoup(response.text, 'html.parser')
+
+        save_resource(project_url, session, soup)
 
 
 if __name__ == '__main__':
@@ -134,18 +156,21 @@ if __name__ == '__main__':
     )
 
     # Check if the project URL and topic arguments are provided
-    if len(sys.argv) != 3:
+    if len(sys.argv) != 2:
         print("Please provide the project URL and topic as arguments.")
-        print("Usage: ./resource_scraper {PROJECT_URL} {TOPIC}")
+        print("Usage: ./resource_scraper {PROJECT_URL|PROJECTS_FILE}")
         sys.exit(1)
 
-    # Get the project URL and topic from the command-line arguments
-    project_url = sys.argv[1]
-    topic = sys.argv[2]
+    # Get the project URL or projects file from the command-line arguments
+    input_arg = sys.argv[1]
 
     session, soup = login()
 
-    print(f"Logged in and now retrieving the project page from URL: {project_url}")
-
-    # Call the function to save the resources
-    save_resource(project_url, session, soup, topic)
+    # Check if the input argument is a file
+    if os.path.isfile(input_arg):
+        with open(input_arg, 'r') as file:
+            project_urls = file.readlines()
+            process_projects(project_urls, session)
+    else:
+        project_url = input_arg
+        process_projects([project_url], session)
