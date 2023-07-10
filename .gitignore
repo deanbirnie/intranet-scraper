@@ -9,3 +9,6 @@ resources.txt
 
 # ignore projects file
 projects.txt
+
+# ignore output from concept-page-scraper
+concept-files/
