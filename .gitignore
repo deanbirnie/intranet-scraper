@@ -6,3 +6,6 @@ __pycache__/
 
 # ignore resources file
 resources.txt
+
+# ignore projects file
+projects.txt
