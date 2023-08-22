@@ -16,6 +16,10 @@ With the Concept Page Scraper, you can scrape all of the content from the concep
 
 `$ ./concept-page-scraper.py`
 
+---
+There is a known issue where the scraper does not properly handle page titles with `/` characters which causes it to attempt to access/store the file incorrectly. This will be resolved in the next update.
+---
+
 You will be prompted for a username and password (the password is private and will not be displayed on the screen). These credentials are never stored for security.
 
 ### Projects Scraper:
@@ -53,3 +57,13 @@ You will be prompted for a username and password (the password is private and wi
 `git clone https://github.com/deanbirnie/intranet-scraper.git`
 
 Simply clone the repository and start using the scripts.
+
+## Roadmap:
+
+In the future, I plan on adding more functionality to this set of tools. For instance:
+
+#### Front-end:
+
+I plan on creating a front end which displays a small embedded screenshot of the resource or thumbnail in the instance of YouTube resources. I'd like for the YouTube videos to be embedded so that they can be consumed directly from your resources page rather than having to navigate to YouTube as this can lead to distractions. This resource portal will also allow for filtering by project, by concept or by tags, such as `C` or `object-oriented programming`.
+
+I will also change the way the information is stored and utilise some sort of database storage for all of the data so that it is easily accessed and stored without the need for multiple files. This will also make it easier to pull the data for the web application.
